@@ -40,7 +40,7 @@
   /* =========================================================
      02 — LAYERS
      underlay (0) < canvas tree (1) < handwriting/title (2) < nav (3)
-     ========================================================= */
+     ========================================================= *
   
   /* =========================================================
      03 — TREE CANVAS (Babylon)
@@ -233,13 +233,13 @@
 
 
 
-/* =========================================================
-   06 — UNDERLAY (INDEPENDENT LAYERS, NON-GLITCHING)
+//* =========================================================
+   06 — UNDERLAY (ORNATE INK, STABLE LOOP)
    ========================================================= */
 
-   :root{
-    --underlay-loop: 60s;
-    --underlay-opacity: 0.16;
+:root{
+    --underlay-loop: 30s;
+    --underlay-opacity: 0.22;
     --underlay-shift-x: 0vw;
   }
   
@@ -248,220 +248,184 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    isolation: isolate;
-    overflow: hidden;
+    overflow: visible;
   }
   
-  /* each layer still rotates, but at different durations + directions */
+  /* =========================================================
+     LIFE CYCLE
+     center → appear → drift → dissolve → hard reset
+     ========================================================= */
+  
+  @keyframes underlayLife{
+    /* invisible, centered */
+    0%{
+      opacity: 0;
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(var(--tx), var(--ty), 0)
+        rotate(var(--r))
+        scale(var(--s));
+    }
+  
+    /* appear quickly */
+    6%{
+      opacity: var(--u);
+    }
+  
+    /* hold */
+    30%{
+      opacity: var(--u);
+    }
+  
+    /* drift */
+    70%{
+      opacity: calc(var(--u) * 0.75);
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(
+          calc(var(--tx) + var(--dx)),
+          calc(var(--ty) + var(--dy)),
+          0
+        )
+        rotate(var(--r))
+        scale(var(--s));
+    }
+  
+    /* fade out while drifting */
+    88%{
+      opacity: 0;
+    }
+  
+    /* HARD RESET — invisible teleport */
+    100%{
+      opacity: 0;
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(var(--tx), var(--ty), 0)
+        rotate(var(--r))
+        scale(var(--s));
+    }
+  }
+  
+  /* slow ambient spin (separate = stable) */
   @keyframes underlaySpin{
     from{ rotate: 0deg; }
-    to  { rotate: calc(360deg * var(--dir, 1)); }
+    to{ rotate: calc(360deg * var(--dir)); }
   }
   
-  /* gentle fade lifecycle */
-  @keyframes underlayFade{
-    0%   { opacity: 0; }
-    12%  { opacity: var(--u, var(--underlay-opacity)); }
-    82%  { opacity: var(--u, var(--underlay-opacity)); }
-    100% { opacity: 0; }
-  }
-  
-  /* drift A: mostly horizontal */
-  @keyframes driftA{
-    0%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
-          var(--ty, 0vh),
-          0
-        )
-        scale(var(--s, 1));
-    }
-    100%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, 140px)),
-          calc(var(--ty, 0vh) + var(--dy, -40px)),
-          0
-        )
-        scale(var(--s, 1));
-    }
-  }
-  
-  /* drift B: mostly vertical */
-  @keyframes driftB{
-    0%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
-          var(--ty, 0vh),
-          0
-        )
-        scale(var(--s, 1));
-    }
-    100%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, -60px)),
-          calc(var(--ty, 0vh) + var(--dy, 180px)),
-          0
-        )
-        scale(var(--s, 1));
-    }
-  }
-  
-  /* drift C: diagonal + slight “wander” */
-  @keyframes driftC{
-    0%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
-          var(--ty, 0vh),
-          0
-        )
-        scale(var(--s, 1));
-    }
-    50%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + calc(var(--dx, 120px) * 0.55)),
-          calc(var(--ty, 0vh) + calc(var(--dy, -120px) * 0.35)),
-          0
-        )
-        scale(var(--s, 1));
-    }
-    100%{
-      transform:
-        translate3d(0, -50%, 0)
-        translate3d(
-          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, 120px)),
-          calc(var(--ty, 0vh) + var(--dy, -120px)),
-          0
-        )
-        scale(var(--s, 1));
-    }
-  }
+  /* =========================================================
+     IMAGE BASE
+     ========================================================= */
   
   .underlay__img{
     position: absolute;
-    left: 0;          /* left-origin center */
+    left: 50%;
     top: 50%;
   
     width: 140vmax;
     height: 140vmax;
     object-fit: contain;
   
+    mix-blend-mode: screen;
     opacity: 0;
   
-    /* IMPORTANT: stable rendering */
-    mix-blend-mode: normal;
-    filter: none;
-    transform-origin: center;
+    transform-origin: var(--ox) var(--oy);
   
-    /* layers combine: fade + unique drift + unique spin */
+    /* static ink blot mask (NO animation = stability) */
+    -webkit-mask-image:
+      radial-gradient(circle at 18% 26%, #000 0 14%, transparent 18%),
+      radial-gradient(circle at 54% 24%, #000 0 18%, transparent 22%),
+      radial-gradient(circle at 72% 44%, #000 0 12%, transparent 16%),
+      radial-gradient(circle at 32% 66%, #000 0 20%, transparent 24%),
+      radial-gradient(circle at 64% 74%, #000 0 16%, transparent 20%);
+    mask-image: -webkit-mask-image;
+  
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 160% 160%;
+    mask-size: 160% 160%;
+  
+    /* IMPORTANT: no animated filter */
+    filter: blur(0.4px) contrast(1.05);
+  
     animation:
-      underlayFade var(--underlay-loop) ease-in-out infinite,
-      var(--drift, driftA) var(--underlay-loop) linear infinite,
-      underlaySpin var(--rotDur, 420s) linear infinite;
+      underlayLife var(--underlay-loop) linear infinite,
+      underlaySpin var(--rotDur) linear infinite;
   
-    animation-delay: var(--delay, 0s), var(--delay, 0s), 0s;
+    animation-delay: var(--delay), 0s;
   
     will-change: transform, opacity;
     backface-visibility: hidden;
   }
   
   /* =========================================================
-     IMAGE VARIATION — make them feel independent
+     COMPOSITION — DIFFERENT SCALES / DIRECTIONS / DRIFTS
      ========================================================= */
   
   .underlay__img:nth-child(1){
-    --u:.18;
-    --tx:-8vw;  --ty:-10vh;
-    --dx:220px; --dy:-80px;
-    --s:.92;
-  
-    --drift: driftA;
-    --dir: 1;
-    --rotDur: 520s;
-    --delay: -4s;
+    --u:.22;
+    --tx:-12vw; --ty:-8vh;
+    --dx:220px; --dy:-180px;
+    --s:.92; --r:-2deg;
+    --ox:30%; --oy:32%;
+    --dir:1; --rotDur:240s;
+    --delay:0s;
   }
-  
   .underlay__img:nth-child(2){
-    --u:.14;
-    --tx:6vw;   --ty:-18vh;
-    --dx:-120px; --dy:260px;
-    --s:.86;
-  
-    --drift: driftB;
-    --dir: -1;
-    --rotDur: 760s;
-    --delay: -21s;
+    --u:.20;
+    --tx:16vw; --ty:-10vh;
+    --dx:-240px; --dy:200px;
+    --s:.88; --r:3deg;
+    --ox:72%; --oy:28%;
+    --dir:-1; --rotDur:360s;
+    --delay:-5s;
   }
-  
   .underlay__img:nth-child(3){
-    --u:.12;
-    --tx:-2vw;  --ty:12vh;
-    --dx:180px; --dy:220px;
-    --s:.82;
-  
-    --drift: driftC;
-    --dir: 1;
-    --rotDur: 640s;
-    --delay: -38s;
+    --u:.18;
+    --tx:-6vw; --ty:14vh;
+    --dx:180px; --dy:260px;
+    --s:.86; --r:1deg;
+    --ox:40%; --oy:78%;
+    --dir:1; --rotDur:300s;
+    --delay:-10s;
   }
-  
   .underlay__img:nth-child(4){
-    --u:.10;
-    --tx:14vw;  --ty:6vh;
-    --dx:-240px; --dy:-140px;
-    --s:.80;
-  
-    --drift: driftA;
-    --dir: -1;
-    --rotDur: 900s;
-    --delay: -9s;
+    --u:.16;
+    --tx:20vw; --ty:10vh;
+    --dx:-260px; --dy:-200px;
+    --s:.84; --r:-4deg;
+    --ox:86%; --oy:54%;
+    --dir:-1; --rotDur:480s;
+    --delay:-15s;
   }
-  
   .underlay__img:nth-child(5){
-    --u:.09;
-    --tx:-14vw; --ty:18vh;
-    --dx:120px; --dy:-220px;
-    --s:.78;
-  
-    --drift: driftB;
-    --dir: 1;
-    --rotDur: 820s;
-    --delay: -28s;
+    --u:.14;
+    --tx:2vw; --ty:0vh;
+    --dx:210px; --dy:-170px;
+    --s:.78; --r:-1deg;
+    --ox:52%; --oy:52%;
+    --dir:1; --rotDur:380s;
+    --delay:-20s;
   }
-  
   .underlay__img:nth-child(6){
-    --u:.08;
-    --tx:10vw;  --ty:-2vh;
-    --dx:-160px; --dy:140px;
-    --s:.84;
-  
-    --drift: driftC;
-    --dir: -1;
-    --rotDur: 700s;
-    --delay: -47s;
+    --u:.12;
+    --tx:-18vw; --ty:18vh;
+    --dx:-220px; --dy:190px;
+    --s:.82; --r:4deg;
+    --ox:18%; --oy:72%;
+    --dir:-1; --rotDur:520s;
+    --delay:-25s;
   }
-  
   .underlay__img:nth-child(7){
-    --u:.07;
-    --tx:2vw;   --ty:22vh;
-    --dx:200px; --dy:-200px;
-    --s:.76;
-  
-    --drift: driftA;
-    --dir: 1;
-    --rotDur: 980s;
-    --delay: -15s;
+    --u:.10;
+    --tx:10vw; --ty:22vh;
+    --dx:170px; --dy:-260px;
+    --s:.80; --r:-2deg;
+    --ox:64%; --oy:86%;
+    --dir:1; --rotDur:460s;
+    --delay:-28s;
   }
   
 

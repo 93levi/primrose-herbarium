@@ -27,42 +27,7 @@
     sound: <span class="audio-toggle__state">off</span>
   </div>
   
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const bgm = document.getElementById("bgm");
-    const toggle = document.querySelector(".audio-toggle");
-    const state = document.querySelector(".audio-toggle__state");
-    if (!bgm || !toggle || !state) return;
-  
-    bgm.loop = true;
-    bgm.volume = 0.7;
-    bgm.muted = true;
-  
-    // try muted autoplay (often allowed)
-    bgm.play().catch(()=>{});
-  
-    const update = () => state.textContent = bgm.muted ? "off" : "on";
-    update();
-  
-    const turnOn = async () => {
-      bgm.muted = false;
-      try { await bgm.play(); } catch(e) {}
-      update();
-    };
-  
-    const turnOff = () => {
-      bgm.muted = true;
-      update();
-    };
-  
-    const toggleSound = () => (bgm.muted ? turnOn() : turnOff());
-  
-    toggle.addEventListener("click", toggleSound);
-    toggle.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") toggleSound();
-    });
-  });
-  </script>
+  <script src="animations.js"></script>
 
 <div class="handwriting" aria-hidden="true">
     <svg class="handwriting__svg"
@@ -132,6 +97,8 @@
       
         </div>
       </div>
+
+    
       
 
     <nav class="nav">
@@ -151,6 +118,7 @@
 
   <!-- Tree canvas -->
   <canvas id="renderCanvas"></canvas>
+
 
   <!-- Babylon scene -->
   <script src="treeScene.js"></script>
