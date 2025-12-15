@@ -1,0 +1,520 @@
+/* =========================================================
+   00 — ROOT CONTROLS
+   ========================================================= */
+
+   :root{
+    /* UI */
+    --header-top: 24px;
+  
+    /* Foreground opacity (tree + text + nav) */
+    --fg-opacity: 0.7;
+  
+    /* Underlay loop */
+    --underlay-loop: 30s;
+    --underlay-opacity: 7.0;
+  
+    /* Underlay composition bias */
+    --underlay-shift-x: 0vw; /* push right if needed: 8vw / 12vw */
+  }
+  
+  /* =========================================================
+     01 — RESET / BASE
+     ========================================================= */
+  
+  *{ box-sizing: border-box; }
+  
+  html, body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body{
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  
+  /* =========================================================
+     02 — LAYERS
+     underlay (0) < canvas tree (1) < handwriting/title (2) < nav (3)
+     ========================================================= */
+  
+  /* =========================================================
+     03 — TREE CANVAS (Babylon)
+     ========================================================= */
+  
+  #renderCanvas{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+    opacity: var(--fg-opacity);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  
+  /* NOTE:
+     If you ever see the canvas “shift” or blur, make sure you do NOT
+     put CSS transforms on #renderCanvas or its parents. */
+  
+  /* =========================================================
+     04 — TITLE
+     ========================================================= */
+  
+  .site-header{
+    position: fixed;
+    top: var(--header-top);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  
+    font-family: "Estonia", serif;
+    font-size: 28px;
+    letter-spacing: 0.15em;
+    text-transform: lowercase;
+    font-weight: 400;
+  
+    opacity: var(--fg-opacity);
+    pointer-events: none;
+    user-select: none;
+  }
+  
+  @media (max-width: 480px){
+    :root{ --header-top: 18px; }
+  }
+  
+  /* =========================================================
+     05 — NAV
+     ========================================================= */
+  
+  .nav{
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 56px;
+    padding: 0 18px;
+    z-index: 3;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    background: transparent;
+    color: #fff;
+  
+    opacity: var(--fg-opacity);
+  }
+  
+  .nav__brand{
+    font-family: "Estonia", serif;
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    text-transform: lowercase;
+    font-weight: 400;
+  }
+  
+  .nav__links{
+    display: flex;
+    gap: 18px;
+  }
+  
+  .nav a{
+    font-family: "Estonia", serif;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  
+    color: inherit;
+    text-decoration: none;
+  
+    opacity: 0.85;
+    transition: opacity 120ms ease;
+  }
+  
+  .nav a:hover{ opacity: 1; }
+  
+  @media (max-width: 640px){
+    .nav{
+      height: 52px;
+      padding: 0 14px;
+    }
+    .nav a{
+      font-size: 20px;
+      letter-spacing: 0.05em;
+    }
+  }
+
+
+  /* =========================================================
+   07 — HANDWRITING
+   ========================================================= */
+
+   .handwriting{
+    position: fixed;
+    left: 275px;
+    top: 80px;
+    bottom: 40px;
+    width: 320px;
+  
+    z-index: 10;                /* above tree + underlay */
+    pointer-events: none;
+  
+    isolation: isolate;         /* isolate from blend/compositing */
+    transform: translateZ(0);   /* force its own GPU layer */
+    will-change: transform;
+  
+    opacity: 0.7;                 /* IMPORTANT: don’t fade the whole layer */
+  }
+  
+  
+  .handwriting__svg{
+    width: 100%;
+    height: 100%;
+    overflow: visible; 
+  }
+  
+  .hw{
+    font-family: "Estonia", serif;
+    font-size: 45px;
+  
+    fill: transparent;
+    stroke: rgba(255,255,255,0.92);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  
+    /* IMPORTANT: remove the filter that causes shimmer */
+    filter: none;
+  
+    /* Optional: keep it crisp */
+    shape-rendering: geometricPrecision;
+  
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+  
+    animation:
+      draw 40s ease-in-out forwards,
+      fill 10s ease-in forwards;
+  
+    animation-delay:
+      var(--d, 0s),
+      calc(var(--d, 0s) + 32s);
+  }
+
+
+  .handwriting__svg{ position: relative; z-index: 1; }
+  
+  /* draw & fill animations */
+  @keyframes draw{
+    to{ stroke-dashoffset: 0; }
+  }
+  
+  @keyframes fill{
+    to{ fill: rgba(255,255,255,.18); }
+  }
+  
+  /* =========================================================
+     LINE-BY-LINE STAGGER
+     ========================================================= */
+  
+  .handwriting__svg .hw:nth-of-type(1){ --d: 0s; }
+  .handwriting__svg .hw:nth-of-type(2){ --d: 1s; }
+  .handwriting__svg .hw:nth-of-type(3){ --d: 2s; }
+  .handwriting__svg .hw:nth-of-type(4){ --d: 3s; }
+  .handwriting__svg .hw:nth-of-type(5){ --d: 4s; }
+  .handwriting__svg .hw:nth-of-type(6){ --d: 5s; }
+  .handwriting__svg .hw:nth-of-type(7){ --d: 6s; }
+  .handwriting__svg .hw:nth-of-type(8){ --d: 7s; }
+  
+
+
+
+/* =========================================================
+   06 — UNDERLAY (INDEPENDENT LAYERS, NON-GLITCHING)
+   ========================================================= */
+
+   :root{
+    --underlay-loop: 60s;
+    --underlay-opacity: 0.16;
+    --underlay-shift-x: 0vw;
+  }
+  
+  .underlay{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  
+  /* each layer still rotates, but at different durations + directions */
+  @keyframes underlaySpin{
+    from{ rotate: 0deg; }
+    to  { rotate: calc(360deg * var(--dir, 1)); }
+  }
+  
+  /* gentle fade lifecycle */
+  @keyframes underlayFade{
+    0%   { opacity: 0; }
+    12%  { opacity: var(--u, var(--underlay-opacity)); }
+    82%  { opacity: var(--u, var(--underlay-opacity)); }
+    100% { opacity: 0; }
+  }
+  
+  /* drift A: mostly horizontal */
+  @keyframes driftA{
+    0%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
+          var(--ty, 0vh),
+          0
+        )
+        scale(var(--s, 1));
+    }
+    100%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, 140px)),
+          calc(var(--ty, 0vh) + var(--dy, -40px)),
+          0
+        )
+        scale(var(--s, 1));
+    }
+  }
+  
+  /* drift B: mostly vertical */
+  @keyframes driftB{
+    0%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
+          var(--ty, 0vh),
+          0
+        )
+        scale(var(--s, 1));
+    }
+    100%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, -60px)),
+          calc(var(--ty, 0vh) + var(--dy, 180px)),
+          0
+        )
+        scale(var(--s, 1));
+    }
+  }
+  
+  /* drift C: diagonal + slight “wander” */
+  @keyframes driftC{
+    0%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw)),
+          var(--ty, 0vh),
+          0
+        )
+        scale(var(--s, 1));
+    }
+    50%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + calc(var(--dx, 120px) * 0.55)),
+          calc(var(--ty, 0vh) + calc(var(--dy, -120px) * 0.35)),
+          0
+        )
+        scale(var(--s, 1));
+    }
+    100%{
+      transform:
+        translate3d(0, -50%, 0)
+        translate3d(
+          calc(var(--underlay-shift-x, 0vw) + var(--tx, 0vw) + var(--dx, 120px)),
+          calc(var(--ty, 0vh) + var(--dy, -120px)),
+          0
+        )
+        scale(var(--s, 1));
+    }
+  }
+  
+  .underlay__img{
+    position: absolute;
+    left: 0;          /* left-origin center */
+    top: 50%;
+  
+    width: 140vmax;
+    height: 140vmax;
+    object-fit: contain;
+  
+    opacity: 0;
+  
+    /* IMPORTANT: stable rendering */
+    mix-blend-mode: normal;
+    filter: none;
+    transform-origin: center;
+  
+    /* layers combine: fade + unique drift + unique spin */
+    animation:
+      underlayFade var(--underlay-loop) ease-in-out infinite,
+      var(--drift, driftA) var(--underlay-loop) linear infinite,
+      underlaySpin var(--rotDur, 420s) linear infinite;
+  
+    animation-delay: var(--delay, 0s), var(--delay, 0s), 0s;
+  
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  
+  /* =========================================================
+     IMAGE VARIATION — make them feel independent
+     ========================================================= */
+  
+  .underlay__img:nth-child(1){
+    --u:.18;
+    --tx:-8vw;  --ty:-10vh;
+    --dx:220px; --dy:-80px;
+    --s:.92;
+  
+    --drift: driftA;
+    --dir: 1;
+    --rotDur: 520s;
+    --delay: -4s;
+  }
+  
+  .underlay__img:nth-child(2){
+    --u:.14;
+    --tx:6vw;   --ty:-18vh;
+    --dx:-120px; --dy:260px;
+    --s:.86;
+  
+    --drift: driftB;
+    --dir: -1;
+    --rotDur: 760s;
+    --delay: -21s;
+  }
+  
+  .underlay__img:nth-child(3){
+    --u:.12;
+    --tx:-2vw;  --ty:12vh;
+    --dx:180px; --dy:220px;
+    --s:.82;
+  
+    --drift: driftC;
+    --dir: 1;
+    --rotDur: 640s;
+    --delay: -38s;
+  }
+  
+  .underlay__img:nth-child(4){
+    --u:.10;
+    --tx:14vw;  --ty:6vh;
+    --dx:-240px; --dy:-140px;
+    --s:.80;
+  
+    --drift: driftA;
+    --dir: -1;
+    --rotDur: 900s;
+    --delay: -9s;
+  }
+  
+  .underlay__img:nth-child(5){
+    --u:.09;
+    --tx:-14vw; --ty:18vh;
+    --dx:120px; --dy:-220px;
+    --s:.78;
+  
+    --drift: driftB;
+    --dir: 1;
+    --rotDur: 820s;
+    --delay: -28s;
+  }
+  
+  .underlay__img:nth-child(6){
+    --u:.08;
+    --tx:10vw;  --ty:-2vh;
+    --dx:-160px; --dy:140px;
+    --s:.84;
+  
+    --drift: driftC;
+    --dir: -1;
+    --rotDur: 700s;
+    --delay: -47s;
+  }
+  
+  .underlay__img:nth-child(7){
+    --u:.07;
+    --tx:2vw;   --ty:22vh;
+    --dx:200px; --dy:-200px;
+    --s:.76;
+  
+    --drift: driftA;
+    --dir: 1;
+    --rotDur: 980s;
+    --delay: -15s;
+  }
+  
+
+  /* =========================================================
+   AUDIO TOGGLE (matches nav)
+   ========================================================= */
+   .audio-toggle{
+    position: fixed;
+    top: 12px;
+    left: 18px;
+    z-index: 9999;          /* higher than nav/canvas/underlay */
+    pointer-events: auto;   /* make sure it can be clicked */
+  
+    font-family: "Estonia", serif;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  
+    color: #fff;
+    opacity: var(--fg-opacity);
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .underlay,
+  #renderCanvas{
+    pointer-events: none;   /* ensures they never steal clicks */
+  }
+  
+
+  #renderCanvas {
+    pointer-events: none;
+  }
+
+  .handwriting {
+    position: relative;
+    z-index: 50;
+    pointer-events: auto;
+  }
+  
+  .handwriting__svg {
+    pointer-events: auto;
+  }
+  
+  .hw-link, .hw-link text {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .handwriting__svg a {
+    cursor: pointer;
+  }
+  
+  .handwriting__svg a:hover text {
+    text-decoration: underline;
+  }

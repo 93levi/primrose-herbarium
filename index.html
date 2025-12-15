@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FROM THE 13TH</title>
+
+  <!-- Babylon -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+
+      <!-- Estonia fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Estonia&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+
+<body>
+
+    <audio id="bgm" src="music/apocalypse.mp3" preload="auto" loop playsinline></audio>
+
+    <!-- audio toggle (top-left, matches nav styling) -->
+<div class="audio-toggle" role="button" tabindex="0" aria-label="Toggle sound">
+    sound: <span class="audio-toggle__state">off</span>
+  </div>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const bgm = document.getElementById("bgm");
+    const toggle = document.querySelector(".audio-toggle");
+    const state = document.querySelector(".audio-toggle__state");
+    if (!bgm || !toggle || !state) return;
+  
+    bgm.loop = true;
+    bgm.volume = 0.7;
+    bgm.muted = true;
+  
+    // try muted autoplay (often allowed)
+    bgm.play().catch(()=>{});
+  
+    const update = () => state.textContent = bgm.muted ? "off" : "on";
+    update();
+  
+    const turnOn = async () => {
+      bgm.muted = false;
+      try { await bgm.play(); } catch(e) {}
+      update();
+    };
+  
+    const turnOff = () => {
+      bgm.muted = true;
+      update();
+    };
+  
+    const toggleSound = () => (bgm.muted ? turnOn() : turnOff());
+  
+    toggle.addEventListener("click", toggleSound);
+    toggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") toggleSound();
+    });
+  });
+  </script>
+
+<div class="handwriting" aria-hidden="true">
+    <svg class="handwriting__svg"
+         viewBox="0 0 420 900"
+         preserveAspectRatio="xMinYMin meet"
+         xmlns="http://www.w3.org/2000/svg">
+  
+         <text class="hw hw--1" x="0" y="90">
+            dear traveler,
+          </text>
+          
+          <!-- FULL LINE BREAK -->
+          <text class="hw hw--break" x="0" y="150"></text>
+          
+          <text class="hw hw--2" x="0" y="210">
+            it is with our deepest gratitude that we thank you for ariving at our beloved home and sancuary of primrose island,
+          </text>
+          
+          <text class="hw hw--3" x="0" y="270">
+            and taking on this quest to colect our many native speicies of roses, so we may finaly complete the primrose hurbarium
+          </text>
+          
+          <text class="hw hw--4" x="0" y="330">
+            after completing your quest you will be rewarded with a gift, click on the orchid to embark on your adventure
+          </text>
+          
+          <!-- FULL LINE BREAK -->
+          <text class="hw hw--break" x="0" y="390"></text>
+          
+          <text class="hw hw--5" x="0" y="450">
+            our fate is in your hards,
+          </text>
+          
+          <!-- EXTRA BLANK LINE -->
+          <text class="hw hw--break" x="0" y="510"></text>
+          
+          <text class="hw hw--6" x="0" y="570">
+            warmest regards,
+          </text>
+          
+          <!-- SMALL GAP -->
+          <text class="hw hw--break" x="0" y="630"></text>
+          
+          <a class="hw-link"
+        xlink:href="https://duality-terrarium.live"
+        target="_blank"
+        rel="noopener noreferrer">
+        <text class="hw hw--7" x="0" y="690">duality terrarium</text>
+        </a>
+          
+        </svg>
+    </div>
+
+
+     <div class="underlay" aria-hidden="true">
+        <div class="underlay__window">
+    
+          <img class="underlay__img" src="img/herbarium1.png" alt="">
+          <img class="underlay__img" src="img/herbarium2.png" alt="">
+          <img class="underlay__img" src="img/herbarium3.png" alt="">
+          <img class="underlay__img" src="img/herbarium4.png" alt="">
+          <img class="underlay__img" src="img/herbarium5.png" alt="">
+          <img class="underlay__img" src="img/herbarium6.png" alt="">
+          <img class="underlay__img" src="img/herbarium7.png" alt="">
+      
+
+      
+        </div>
+      </div>
+      
+
+    <nav class="nav">
+        <a class="nav__brand" href="/"></a>
+      
+        <div class="nav__links">
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+
+  <!-- Title -->
+  <header class="site-header">
+    from the thirteenth
+  </header>
+
+  <!-- Tree canvas -->
+  <canvas id="renderCanvas"></canvas>
+
+  <!-- Babylon scene -->
+  <script src="treeScene.js"></script>
+
+
+ 
+
+
+
+</body>
+</html>
