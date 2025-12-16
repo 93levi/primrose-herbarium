@@ -56,6 +56,7 @@
     opacity: var(--fg-opacity);
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    pointer-events: auto;
   }
   
   /* NOTE:
@@ -233,7 +234,7 @@
 
 
 
-//* =========================================================
+/* =========================================================
    06 — UNDERLAY (ORNATE INK, STABLE LOOP)
    ========================================================= */
 
@@ -482,3 +483,106 @@
   .handwriting__svg a:hover text {
     text-decoration: underline;
   }
+
+
+
+  .open-map-btn {
+
+
+
+    position: fixed;
+    top: var(--header-top);
+    left: 334px;
+    top: 680px;
+    transform: translateX(-50%);
+    z-index: 99999;
+    font-family: "Estonia", serif;
+    font-size: 28px;
+    letter-spacing: 0.15em;
+    text-transform: lowercase;
+    font-weight: 400;
+    opacity: 70%;
+    user-select: none;
+  }
+
+
+
+  /* =========================================================
+   MAP PAGE 
+   ========================================================= */
+
+   #bgVideo{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    object-position: center;
+    z-index: -10;
+    pointer-events: none;
+    background: #000;
+    opacity: 50%;
+  }
+  
+  .map{
+    width: 300px;
+    height: auto; /* keeps aspect ratio */
+    margin-top: 350px;
+    margin-left: 150px;
+    position: absolute;
+    z-index: 1;
+  
+  }
+
+
+
+.rose1{
+    width: 200px;
+    margin-top: 50px;
+    margin-left: 950px;
+    position: absolute;
+    z-index: 2;
+    
+}
+
+.rose2{
+    width: 200px;
+    margin-top: 50px;
+    margin-left: 1050px;
+    position: absolute;
+    z-index: 2;
+    
+}
+
+.rose3{
+    width: 200px;
+    margin-top: 50px;
+    margin-left: 1150px;
+    position: absolute;
+    z-index: 2;
+    
+}
+
+
+.rose1, .rose2, .rose3, .map {
+    filter:
+      drop-shadow(1px 0 black)
+      drop-shadow(-1px 0 black)
+      drop-shadow(0 1px black)
+      drop-shadow(0 -1px black);
+}
+
+
+.rose2,
+.rose3 {
+    filter: grayscale(100%);
+}
+
+.treemap {
+    width: 200px;
+    margin-top: 50px;
+    margin-left: 1050px;
+    position: absolute;
+    z-index: 2;
+}
+  

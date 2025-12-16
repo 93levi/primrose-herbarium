@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FROM THE 13TH</title>
+
+  <!-- Babylon -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+
+      <!-- Estonia fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Estonia&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+
+<body>
+
+    <video id="bgVideo" autoplay muted playsinline loop preload="auto">
+        <source src="video/absol BTS.mp4" type="video/mp4">
+      </video>
+      
+      <script>
+        const v = document.getElementById("bgVideo");
+      
+        v.addEventListener("error", () => {
+          console.log("VIDEO ERROR:", v.error);
+        });
+      
+        v.addEventListener("loadedmetadata", async () => {
+          v.currentTime = 637;
+          try { await v.play(); } catch(e) { console.log("play blocked:", e); }
+        });
+      </script>
+      
+
+
+      <img src="img/map.png" alt="" class="map">
+
+      <img src="img/herbarium7.png" alt="" class="rose1">
+      <img src="img/herbarium7.png" alt="" class="rose2">
+      <img src="img/herbarium7.png" alt="" class="rose3">
+        
+
+
+      <script src="animations.js" class="treeMap"> </script>
+
+
+
+
+    </body>

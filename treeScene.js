@@ -477,4 +477,14 @@ function applyTreeZoomKeepingBasePinned() {
       updateOrtho();
     });
   })();
+
+  treeMesh.isPickable = true;
+
+scene.onPointerObservable.add((pointerInfo) => {
+  if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERPICK) {
+    if (pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh === treeMesh) {
+      window.location.href = "map.html";
+    }
+  }
+});
   
