@@ -20,22 +20,17 @@
 
 <body>
 
+    <audio id="bgm" src="music/apocalypse.mp3" preload="auto" loop playsinline></audio>
+
+    <!-- audio toggle (top-left, matches nav styling) -->
+<div class="audio-toggle" role="button" tabindex="0" aria-label="Toggle sound">
+    sound: <span class="audio-toggle__state">off</span>
+  </div>
+
     <video id="bgVideo" autoplay muted playsinline loop preload="auto">
-        <source src="video/absol BTS.mp4" type="video/mp4">
+        <source src="video/absol.mp4" type="video/mp4">
       </video>
-      
-      <script>
-        const v = document.getElementById("bgVideo");
-      
-        v.addEventListener("error", () => {
-          console.log("VIDEO ERROR:", v.error);
-        });
-      
-        v.addEventListener("loadedmetadata", async () => {
-          v.currentTime = 637;
-          try { await v.play(); } catch(e) { console.log("play blocked:", e); }
-        });
-      </script>
+
       
 
 

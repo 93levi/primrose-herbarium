@@ -233,17 +233,22 @@
   
 
 
-
 /* =========================================================
-   06 — UNDERLAY (ORNATE INK, STABLE LOOP)
+   UNDERLAY — 2000s PAINT SPLATTER REVEAL + NEVER EMPTY
+   Drop-in replacement for your whole underlay section.
+   (Works without any external splatter files)
    ========================================================= */
 
 :root{
-    --underlay-loop: 30s;
-    --underlay-opacity: 0.22;
-    --underlay-shift-x: 0vw;
+    /* two chunky splatter silhouettes (inline SVG masks) */
+    --splatA: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='black'/%3E%3Cpath fill='white' d='M86 18c12 8 9 22 22 28 10 5 23-2 30 8 7 11-7 19-2 30 6 12 23 9 27 21 5 14-12 21-14 34-2 14 12 22 5 33-9 14-26 1-41 8-12 6-12 22-26 25-15 3-18-16-31-18-14-2-24 13-35 6-14-9-1-26-8-41-6-12-23-12-25-26-3-15 16-18 18-31 2-14-13-24-6-35 8-13 23-2 34-14 10-10 7-26 18-33z'/%3E%3Ccircle cx='34' cy='68' r='10' fill='white'/%3E%3Ccircle cx='160' cy='52' r='8' fill='white'/%3E%3Ccircle cx='152' cy='162' r='12' fill='white'/%3E%3Ccircle cx='44' cy='152' r='7' fill='white'/%3E%3Ccircle cx='112' cy='176' r='6' fill='white'/%3E%3Ccircle cx='176' cy='108' r='5' fill='white'/%3E%3C/svg%3E");
+    --splatB: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='black'/%3E%3Cpath fill='white' d='M100 20c18 0 22 16 36 20 13 4 28-6 36 6 9 14-12 22-10 36 2 14 20 18 18 33-2 16-22 14-29 27-7 12 6 28-7 36-14 9-22-12-36-10-14 2-18 20-33 18-16-2-14-22-27-29-12-7-28 6-36-7-9-14 12-22 10-36-2-14-20-18-18-33 2-16 22-14 29-27 7-12-6-28 7-36 14-9 22 12 36 10 14-2 18-20 33-18z'/%3E%3Ccircle cx='22' cy='110' r='8' fill='white'/%3E%3Ccircle cx='178' cy='94' r='9' fill='white'/%3E%3Ccircle cx='56' cy='34' r='7' fill='white'/%3E%3Ccircle cx='150' cy='30' r='6' fill='white'/%3E%3Ccircle cx='40' cy='176' r='10' fill='white'/%3E%3Ccircle cx='168' cy='168' r='6' fill='white'/%3E%3C/svg%3E");
+  
+    /* quick tweak knobs */
+    --underlay-base-opacity: 0.22; /* overall strength ceiling */
   }
   
+  /* container */
   .underlay{
     position: fixed;
     inset: 0;
@@ -252,66 +257,100 @@
     overflow: visible;
   }
   
+  .underlay__window{
+    position: absolute;
+    inset: 0;
+  }
+  
   /* =========================================================
-     LIFE CYCLE
-     center → appear → drift → dissolve → hard reset
+     KEYFRAMES
      ========================================================= */
   
+  /* pop-on splatter reveal (mask grows + jitters in steps) */
+  @keyframes splatMask{
+    0%   { -webkit-mask-size: 1% 1%;     mask-size: 1% 1%;     -webkit-mask-position: 49% 52%; mask-position: 49% 52%; }
+    4%   { -webkit-mask-size: 16% 16%;   mask-size: 16% 16%;   -webkit-mask-position: 52% 48%; mask-position: 52% 48%; }
+    8%   { -webkit-mask-size: 68% 68%;   mask-size: 68% 68%;   -webkit-mask-position: 48% 53%; mask-position: 48% 53%; }
+    12%  { -webkit-mask-size: 220% 220%; mask-size: 220% 220%; -webkit-mask-position: 51% 49%; mask-position: 51% 49%; }
+    18%  { -webkit-mask-size: 170% 170%; mask-size: 170% 170%; -webkit-mask-position: 50% 50%; mask-position: 50% 50%; }
+    100% { -webkit-mask-size: 170% 170%; mask-size: 170% 170%; -webkit-mask-position: 50% 50%; mask-position: 50% 50%; }
+  }
+  
+  /* life cycle (opacity + drift) */
   @keyframes underlayLife{
-    /* invisible, centered */
     0%{
       opacity: 0;
       transform:
         translate3d(-50%, -50%, 0)
-        translate3d(var(--tx), var(--ty), 0)
-        rotate(var(--r))
-        scale(var(--s));
+        translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
+        rotate(calc(var(--r, 0deg) - 7deg))
+        scale(calc(var(--s, 0.9) * 0.86));
+      filter: blur(2.0px) contrast(1.10) saturate(1.15);
     }
   
-    /* appear quickly */
+    /* wet hit */
     6%{
-      opacity: var(--u);
+      opacity: var(--u, 0.18);
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
+        rotate(var(--r, 0deg))
+        scale(calc(var(--s, 0.9) * 1.10));
+      filter: blur(0.8px) contrast(1.35) saturate(1.35);
+    }
+  
+    /* settle */
+    14%{
+      opacity: var(--u, 0.18);
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
+        rotate(var(--r, 0deg))
+        scale(var(--s, 0.9));
+      filter: blur(0.45px) contrast(1.18) saturate(1.18);
     }
   
     /* hold */
-    30%{
-      opacity: var(--u);
+    38%{
+      opacity: var(--u, 0.18);
     }
   
     /* drift */
-    70%{
-      opacity: calc(var(--u) * 0.75);
+    75%{
+      opacity: calc(var(--u, 0.18) * 0.78);
       transform:
         translate3d(-50%, -50%, 0)
         translate3d(
-          calc(var(--tx) + var(--dx)),
-          calc(var(--ty) + var(--dy)),
+          calc(var(--tx, 0vw) + var(--dx, 0px)),
+          calc(var(--ty, 0vh) + var(--dy, 0px)),
           0
         )
-        rotate(var(--r))
-        scale(var(--s));
+        rotate(var(--r, 0deg))
+        scale(var(--s, 0.9));
     }
   
-    /* fade out while drifting */
-    88%{
+    /* dissolve */
+    90%{
       opacity: 0;
+      filter: blur(1.6px) contrast(1.05) saturate(1.05);
     }
   
-    /* HARD RESET — invisible teleport */
+    /* invisible reset */
     100%{
       opacity: 0;
       transform:
         translate3d(-50%, -50%, 0)
-        translate3d(var(--tx), var(--ty), 0)
-        rotate(var(--r))
-        scale(var(--s));
+        translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
+        rotate(var(--r, 0deg))
+        scale(var(--s, 0.9));
+      filter: blur(2px) contrast(1.05) saturate(1.05);
     }
   }
   
-  /* slow ambient spin (separate = stable) */
+  /* slow ambient spin */
   @keyframes underlaySpin{
     from{ rotate: 0deg; }
-    to{ rotate: calc(360deg * var(--dir)); }
+    to{ rotate: calc(360deg * var(--dir, 1)); }
   }
   
   /* =========================================================
@@ -328,106 +367,123 @@
     object-fit: contain;
   
     mix-blend-mode: screen;
-    opacity: 0;
   
-    transform-origin: var(--ox) var(--oy);
-  
-    /* static ink blot mask (NO animation = stability) */
-    -webkit-mask-image:
-      radial-gradient(circle at 18% 26%, #000 0 14%, transparent 18%),
-      radial-gradient(circle at 54% 24%, #000 0 18%, transparent 22%),
-      radial-gradient(circle at 72% 44%, #000 0 12%, transparent 16%),
-      radial-gradient(circle at 32% 66%, #000 0 20%, transparent 24%),
-      radial-gradient(circle at 64% 74%, #000 0 16%, transparent 20%);
-    mask-image: -webkit-mask-image;
-  
+    /* pick a splatter variant */
+    --splat: var(--splatA);
+    -webkit-mask-image: var(--splat);
+    mask-image: var(--splat);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 160% 160%;
-    mask-size: 160% 160%;
+    -webkit-mask-position: 50% 50%;
+    mask-position: 50% 50%;
+    -webkit-mask-size: 1% 1%;
+    mask-size: 1% 1%;
   
-    /* IMPORTANT: no animated filter */
-    filter: blur(0.4px) contrast(1.05);
+    transform-origin: var(--ox, 50%) var(--oy, 50%);
+    opacity: 0;
+  
+    /* defaults so it's never "gone" if JS isn't running */
+    --u: 0.18;
+    --lifeDur: 31s;
+    --delay: 0s;
+  
+    --tx: 0vw; --ty: 0vh;
+    --dx: 0px; --dy: 0px;
+    --s: 0.9;  --r: 0deg;
+  
+    --dir: 1;
+    --rotDur: 360s;
   
     animation:
-      underlayLife var(--underlay-loop) linear infinite,
-      underlaySpin var(--rotDur) linear infinite;
+      underlayLife var(--lifeDur) linear infinite,
+      underlaySpin var(--rotDur) linear infinite,
+      splatMask  var(--lifeDur) steps(9, end) infinite;
   
-    animation-delay: var(--delay), 0s;
+    animation-delay: var(--delay), 0s, var(--delay);
   
-    will-change: transform, opacity;
+    will-change: transform, opacity, filter, -webkit-mask-size, -webkit-mask-position;
     backface-visibility: hidden;
   }
   
+  /* alternate mask for variety */
+  .underlay__img:nth-child(even){ --splat: var(--splatB); }
+  
   /* =========================================================
-     COMPOSITION — DIFFERENT SCALES / DIRECTIONS / DRIFTS
+     BASE COMPOSITION (works alone; your JS can override)
      ========================================================= */
   
   .underlay__img:nth-child(1){
-    --u:.22;
+    --u: calc(var(--underlay-base-opacity) * 1.00);
     --tx:-12vw; --ty:-8vh;
     --dx:220px; --dy:-180px;
     --s:.92; --r:-2deg;
     --ox:30%; --oy:32%;
     --dir:1; --rotDur:240s;
-    --delay:0s;
+    --lifeDur: 29s;
+    --delay:-2s;
   }
   .underlay__img:nth-child(2){
-    --u:.20;
+    --u: calc(var(--underlay-base-opacity) * 0.92);
     --tx:16vw; --ty:-10vh;
     --dx:-240px; --dy:200px;
     --s:.88; --r:3deg;
     --ox:72%; --oy:28%;
     --dir:-1; --rotDur:360s;
-    --delay:-5s;
+    --lifeDur: 33s;
+    --delay:-9s;
   }
   .underlay__img:nth-child(3){
-    --u:.18;
+    --u: calc(var(--underlay-base-opacity) * 0.84);
     --tx:-6vw; --ty:14vh;
     --dx:180px; --dy:260px;
     --s:.86; --r:1deg;
     --ox:40%; --oy:78%;
     --dir:1; --rotDur:300s;
-    --delay:-10s;
+    --lifeDur: 26s;
+    --delay:-14s;
   }
   .underlay__img:nth-child(4){
-    --u:.16;
+    --u: calc(var(--underlay-base-opacity) * 0.76);
     --tx:20vw; --ty:10vh;
     --dx:-260px; --dy:-200px;
     --s:.84; --r:-4deg;
     --ox:86%; --oy:54%;
     --dir:-1; --rotDur:480s;
-    --delay:-15s;
+    --lifeDur: 37s;
+    --delay:-6s;
   }
   .underlay__img:nth-child(5){
-    --u:.14;
+    --u: calc(var(--underlay-base-opacity) * 0.66);
     --tx:2vw; --ty:0vh;
     --dx:210px; --dy:-170px;
     --s:.78; --r:-1deg;
     --ox:52%; --oy:52%;
     --dir:1; --rotDur:380s;
-    --delay:-20s;
+    --lifeDur: 24s;
+    --delay:-18s;
   }
   .underlay__img:nth-child(6){
-    --u:.12;
+    --u: calc(var(--underlay-base-opacity) * 0.56);
     --tx:-18vw; --ty:18vh;
     --dx:-220px; --dy:190px;
     --s:.82; --r:4deg;
     --ox:18%; --oy:72%;
     --dir:-1; --rotDur:520s;
-    --delay:-25s;
+    --lifeDur: 41s;
+    --delay:-11s;
   }
   .underlay__img:nth-child(7){
-    --u:.10;
+    --u: calc(var(--underlay-base-opacity) * 0.48);
     --tx:10vw; --ty:22vh;
     --dx:170px; --dy:-260px;
     --s:.80; --r:-2deg;
     --ox:64%; --oy:86%;
     --dir:1; --rotDur:460s;
-    --delay:-28s;
+    --lifeDur: 21s;
+    --delay:-4s;
   }
+  
+  
   
 
   /* =========================================================
@@ -521,7 +577,7 @@
     z-index: -10;
     pointer-events: none;
     background: #000;
-    opacity: 50%;
+    
   }
   
   .map{
