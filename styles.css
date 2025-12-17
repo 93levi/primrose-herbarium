@@ -233,21 +233,18 @@
 
 
   
-
-
 /* =========================================================
    UNDERLAY — 2000s PAINT SPLATTER REVEAL + NEVER EMPTY
-   Drop-in replacement for your whole underlay section.
-   (Works without any external splatter files)
+   Tuned: a bit MORE vibrant + noticeably LESS opacity loss (still moderate)
    ========================================================= */
 
-:root{
+   :root{
     /* two chunky splatter silhouettes (inline SVG masks) */
     --splatA: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='black'/%3E%3Cpath fill='white' d='M86 18c12 8 9 22 22 28 10 5 23-2 30 8 7 11-7 19-2 30 6 12 23 9 27 21 5 14-12 21-14 34-2 14 12 22 5 33-9 14-26 1-41 8-12 6-12 22-26 25-15 3-18-16-31-18-14-2-24 13-35 6-14-9-1-26-8-41-6-12-23-12-25-26-3-15 16-18 18-31 2-14-13-24-6-35 8-13 23-2 34-14 10-10 7-26 18-33z'/%3E%3Ccircle cx='34' cy='68' r='10' fill='white'/%3E%3Ccircle cx='160' cy='52' r='8' fill='white'/%3E%3Ccircle cx='152' cy='162' r='12' fill='white'/%3E%3Ccircle cx='44' cy='152' r='7' fill='white'/%3E%3Ccircle cx='112' cy='176' r='6' fill='white'/%3E%3Ccircle cx='176' cy='108' r='5' fill='white'/%3E%3C/svg%3E");
     --splatB: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='black'/%3E%3Cpath fill='white' d='M100 20c18 0 22 16 36 20 13 4 28-6 36 6 9 14-12 22-10 36 2 14 20 18 18 33-2 16-22 14-29 27-7 12 6 28-7 36-14 9-22-12-36-10-14 2-18 20-33 18-16-2-14-22-27-29-12-7-28 6-36-7-9-14 12-22 10-36-2-14-20-18-18-33 2-16 22-14 29-27 7-12-6-28 7-36 14-9 22 12 36 10 14-2 18-20 33-18z'/%3E%3Ccircle cx='22' cy='110' r='8' fill='white'/%3E%3Ccircle cx='178' cy='94' r='9' fill='white'/%3E%3Ccircle cx='56' cy='34' r='7' fill='white'/%3E%3Ccircle cx='150' cy='30' r='6' fill='white'/%3E%3Ccircle cx='40' cy='176' r='10' fill='white'/%3E%3Ccircle cx='168' cy='168' r='6' fill='white'/%3E%3C/svg%3E");
   
-    /* quick tweak knobs */
-    --underlay-base-opacity: 0.22; /* overall strength ceiling */
+    /* TUNING KNOBS */
+    --underlay-base-opacity: 0.26; /* was 0.22 (moderate bump) */
   }
   
   /* container */
@@ -287,39 +284,41 @@
         translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
         rotate(calc(var(--r, 0deg) - 7deg))
         scale(calc(var(--s, 0.9) * 0.86));
-      filter: blur(2.0px) contrast(1.10) saturate(1.15);
+      /* a touch punchier */
+      filter: blur(1.8px) contrast(1.14) saturate(1.22);
     }
   
     /* wet hit */
     6%{
-      opacity: var(--u, 0.18);
+      opacity: var(--u, 0.20); /* slightly higher default */
       transform:
         translate3d(-50%, -50%, 0)
         translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
         rotate(var(--r, 0deg))
         scale(calc(var(--s, 0.9) * 1.10));
-      filter: blur(0.8px) contrast(1.35) saturate(1.35);
+      /* more vibrancy on impact */
+      filter: blur(0.75px) contrast(1.42) saturate(1.55);
     }
   
     /* settle */
     14%{
-      opacity: var(--u, 0.18);
+      opacity: var(--u, 0.20);
       transform:
         translate3d(-50%, -50%, 0)
         translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
         rotate(var(--r, 0deg))
         scale(var(--s, 0.9));
-      filter: blur(0.45px) contrast(1.18) saturate(1.18);
+      filter: blur(0.40px) contrast(1.24) saturate(1.32);
     }
   
     /* hold */
     38%{
-      opacity: var(--u, 0.18);
+      opacity: var(--u, 0.20);
     }
   
-    /* drift */
+    /* drift (LESS opacity loss than before) */
     75%{
-      opacity: calc(var(--u, 0.18) * 0.78);
+      opacity: calc(var(--u, 0.20) * 0.90); /* was 0.78 */
       transform:
         translate3d(-50%, -50%, 0)
         translate3d(
@@ -329,12 +328,14 @@
         )
         rotate(var(--r, 0deg))
         scale(var(--s, 0.9));
+      /* keep it lively late in the cycle */
+      filter: blur(0.50px) contrast(1.18) saturate(1.26);
     }
   
     /* dissolve */
-    90%{
+    92%{
       opacity: 0;
-      filter: blur(1.6px) contrast(1.05) saturate(1.05);
+      filter: blur(1.4px) contrast(1.06) saturate(1.10);
     }
   
     /* invisible reset */
@@ -345,7 +346,7 @@
         translate3d(var(--tx, 0vw), var(--ty, 0vh), 0)
         rotate(var(--r, 0deg))
         scale(var(--s, 0.9));
-      filter: blur(2px) contrast(1.05) saturate(1.05);
+      filter: blur(1.8px) contrast(1.10) saturate(1.18);
     }
   }
   
@@ -368,6 +369,7 @@
     height: 140vmax;
     object-fit: contain;
   
+    /* slightly punchier blend */
     mix-blend-mode: screen;
   
     /* pick a splatter variant */
@@ -385,7 +387,7 @@
     opacity: 0;
   
     /* defaults so it's never "gone" if JS isn't running */
-    --u: 0.18;
+    --u: 0.20;          /* was 0.18 */
     --lifeDur: 31s;
     --delay: 0s;
   
@@ -415,7 +417,7 @@
      ========================================================= */
   
   .underlay__img:nth-child(1){
-    --u: calc(var(--underlay-base-opacity) * 1.00);
+    --u: calc(var(--underlay-base-opacity) * 1.05);
     --tx:-12vw; --ty:-8vh;
     --dx:220px; --dy:-180px;
     --s:.92; --r:-2deg;
@@ -425,7 +427,7 @@
     --delay:-2s;
   }
   .underlay__img:nth-child(2){
-    --u: calc(var(--underlay-base-opacity) * 0.92);
+    --u: calc(var(--underlay-base-opacity) * 0.98);
     --tx:16vw; --ty:-10vh;
     --dx:-240px; --dy:200px;
     --s:.88; --r:3deg;
@@ -435,7 +437,7 @@
     --delay:-9s;
   }
   .underlay__img:nth-child(3){
-    --u: calc(var(--underlay-base-opacity) * 0.84);
+    --u: calc(var(--underlay-base-opacity) * 0.92);
     --tx:-6vw; --ty:14vh;
     --dx:180px; --dy:260px;
     --s:.86; --r:1deg;
@@ -445,7 +447,7 @@
     --delay:-14s;
   }
   .underlay__img:nth-child(4){
-    --u: calc(var(--underlay-base-opacity) * 0.76);
+    --u: calc(var(--underlay-base-opacity) * 0.86);
     --tx:20vw; --ty:10vh;
     --dx:-260px; --dy:-200px;
     --s:.84; --r:-4deg;
@@ -455,7 +457,7 @@
     --delay:-6s;
   }
   .underlay__img:nth-child(5){
-    --u: calc(var(--underlay-base-opacity) * 0.66);
+    --u: calc(var(--underlay-base-opacity) * 0.78);
     --tx:2vw; --ty:0vh;
     --dx:210px; --dy:-170px;
     --s:.78; --r:-1deg;
@@ -465,7 +467,7 @@
     --delay:-18s;
   }
   .underlay__img:nth-child(6){
-    --u: calc(var(--underlay-base-opacity) * 0.56);
+    --u: calc(var(--underlay-base-opacity) * 0.70);
     --tx:-18vw; --ty:18vh;
     --dx:-220px; --dy:190px;
     --s:.82; --r:4deg;
@@ -475,7 +477,7 @@
     --delay:-11s;
   }
   .underlay__img:nth-child(7){
-    --u: calc(var(--underlay-base-opacity) * 0.48);
+    --u: calc(var(--underlay-base-opacity) * 0.62);
     --tx:10vw; --ty:22vh;
     --dx:170px; --dy:-260px;
     --s:.80; --r:-2deg;
@@ -484,8 +486,6 @@
     --lifeDur: 21s;
     --delay:-4s;
   }
-  
-  
   
 
   /* =========================================================
@@ -657,7 +657,7 @@
 .handwriting-map{
   position: fixed;
   left: 35vw;
-  top: 32vh;
+  top: 30vh;
   width: 300px;
   max-width: 86vw;
 
