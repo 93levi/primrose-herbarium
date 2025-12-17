@@ -230,6 +230,8 @@
   .handwriting__svg .hw:nth-of-type(6){ --d: 5s; }
   .handwriting__svg .hw:nth-of-type(7){ --d: 6s; }
   .handwriting__svg .hw:nth-of-type(8){ --d: 7s; }
+
+
   
 
 
@@ -594,8 +596,8 @@
 
 .rose1{
     width: 200px;
-    margin-top: 50px;
-    margin-left: 950px;
+    margin-top: 400px;
+    margin-left: 1000px;
     position: absolute;
     z-index: 2;
     
@@ -603,8 +605,8 @@
 
 .rose2{
     width: 200px;
-    margin-top: 50px;
-    margin-left: 1050px;
+    margin-top: 400px;
+    margin-left: 1100px;
     position: absolute;
     z-index: 2;
     
@@ -612,8 +614,8 @@
 
 .rose3{
     width: 200px;
-    margin-top: 50px;
-    margin-left: 1150px;
+    margin-top: 400px;
+    margin-left: 1200px;
     position: absolute;
     z-index: 2;
     
@@ -642,3 +644,104 @@
     z-index: 2;
 }
   
+
+
+
+
+
+
+/* =========================================================
+   07B — MAP HANDWRITING (HOVER TRIGGERED)
+   ========================================================= */
+
+.handwriting-map{
+  position: fixed;
+  left: 35vw;
+  top: 32vh;
+  width: 300px;
+  max-width: 86vw;
+
+  z-index: 20;               /* above map + video */
+  pointer-events: none;     /* text itself not interactive */
+
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform;
+
+  opacity: 0.8;
+}
+
+.handwriting-map__svg{
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* --- CLONED STYLE (SCOPED) --- */
+.handwriting-map .hw{
+  font-family: "Estonia", serif;
+  font-size: 40px;
+
+  fill: transparent;
+  stroke: rgba(255,255,255,0.92);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  filter: none;
+  shape-rendering: geometricPrecision;
+
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+
+  /* IMPORTANT: paused until hover */
+  animation:
+    map-draw 36s ease-in-out forwards,
+    map-fill 10s ease-in forwards;
+
+  animation-delay:
+    var(--d, 0s),
+    calc(var(--d, 0s) + 28s);
+
+  animation-play-state: running;
+}
+
+/* title slightly larger */
+.handwriting-map .hw--2{
+  font-size: 46px;
+}
+
+/* paragraphs slightly smaller */
+.handwriting-map .hw--3,
+.handwriting-map .hw--4,
+.handwriting-map .hw--4b,
+.handwriting-map .hw--5{
+  font-size: 28px;
+}
+
+
+
+/* =========================================================
+   KEYFRAMES (scoped so they don't collide)
+   ========================================================= */
+
+@keyframes map-draw{
+  to{ stroke-dashoffset: 0; }
+}
+
+@keyframes map-fill{
+  to{ fill: rgba(255,255,255,.18); }
+}
+
+/* =========================================================
+   LINE STAGGER (same rhythm)
+   ========================================================= */
+
+.handwriting-map .hw:nth-of-type(1){ --d: 0s; }
+.handwriting-map .hw:nth-of-type(2){ --d: 1s; }
+.handwriting-map .hw:nth-of-type(3){ --d: 2s; }
+.handwriting-map .hw:nth-of-type(4){ --d: 3s; }
+.handwriting-map .hw:nth-of-type(5){ --d: 4s; }
+.handwriting-map .hw:nth-of-type(6){ --d: 5s; }
+.handwriting-map .hw:nth-of-type(7){ --d: 6s; }
+.handwriting-map .hw:nth-of-type(8){ --d: 7s; }
